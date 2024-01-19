@@ -33,5 +33,5 @@ def generate_qr_code():
 
     return send_file(img_path, as_attachment=True)
 
-if __name__ == "__main__":
-    app.run(debug=True, use_reloader=False)
+# if __name__ == "__main__":
+#     app.run(debug=True, use_reloader=False)
