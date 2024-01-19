@@ -28,7 +28,7 @@ def generate_qr_code():
     qr.make(fit=True)
 
     img = qr.make_image(fill_color="black", back_color="white")
-    img_path = os.path.join(app.root_path, "static", "qrcode.png")
+    img_path = os.path.join(app.root_path, "static","qrcodes", f"{name}qrcode.png")
     img.save(img_path)
 
     return send_file(img_path, as_attachment=True)
