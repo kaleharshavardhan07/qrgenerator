@@ -1,8 +1,9 @@
-
 import cv2
 from pyzbar.pyzbar import decode
 import openpyxl
 from openpyxl import Workbook
+import gspread
+from google.oauth2 import service_account
 
 def scan_qr_code_camera():
     cap = cv2.VideoCapture(0) 
@@ -24,23 +25,27 @@ def scan_qr_code_camera():
     cap.release()
     cv2.destroyAllWindows()
 
-def save_to_excel(data, excel_filename="data.xlsx"):
-    wb = Workbook()
-    sheet = wb.active
+def save_to_google_sheet(data, spreadsheet_key='1Zy3x_d4Lrk2v1njIG9LL5-cp3i_a_0PzCVT7Q6NpQls', sheet_name='Sheet1'):
+ 
+    creds = service_account.Credentials.from_service_account_file(
+        './psf-data-411811-a451ae390965.json',
+        scopes=['https://www.googleapis.com/auth/spreadsheets'],
+    )
 
-    sheet["A1"] = "Name"
-    sheet["B1"] = "Phone"
+    gc = gspread.authorize(creds)
 
+    sheet = gc.open_by_key(spreadsheet_key).worksheet(sheet_name)
+
+   
     name, phone = data.split("\n")[0].split(":")[1], data.split("\n")[1].split(":")[1]
 
-    sheet.append([name, phone])
+    sheet.append_row([name, phone])
 
-    wb.save(excel_filename)
-    print(f"Data saved to {excel_filename}")
+    print(f"Data saved to Google Sheet.")
 
 if __name__ == "__main__":
     print("Scan QR code with the camera.")
     data = scan_qr_code_camera()
     print("QR Code scanned successfully!")
-    
-    save_to_excel(data)
+
+    save_to_google_sheet(data)
